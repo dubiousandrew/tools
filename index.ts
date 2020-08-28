@@ -23,7 +23,11 @@ async function run(){
   console.log(`found ${files.length} files`);
 
   const component = process.argv[3];
-  const oldImport = new RegExp(`(import \\{\\s*((\\w)*,\\s*)*)(${component},?\\s*)(((\\w)*,\\s*)*\\} from 'libraries\\/components')`, 'g');
+
+  const compComma = '(\\w*,\\s*)';
+  const comp = '(\\w*\\s*)'
+
+  const oldImport = new RegExp(`(import \\{\\s*${compComma}*)(${component},?\\s*)(${compComma}*${comp}*\\} from 'libraries\\/components')`, 'g');
 
   files.forEach(file =>{
     searched++;
@@ -32,7 +36,7 @@ async function run(){
     const location = txt.search(oldImport);
     if(location >= 0 ){
       //remove the imported item
-      const step1 = txt.replace(oldImport, '$1$5')
+      const step1 = txt.replace(oldImport, '$1$4')
 
       //get rid of empty imports
       const step2 = step1.replace(/(import \{(\s*)\} from 'libraries\/components';?)/g, '');
