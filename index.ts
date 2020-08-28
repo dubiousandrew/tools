@@ -3,9 +3,11 @@ import { readFileSync, writeFileSync } from 'fs'
 import { promises } from 'dns';
 const { readdir } = require('fs').promises;
 
+var replaced = 0;
+var searched = 0;
+
 async function run(){
   console.log("starting tools");
-  var count = 0;
 
   async function getFiles(dir) {
     const dirents = await readdir(dir, { withFileTypes: true });
@@ -24,7 +26,7 @@ async function run(){
   const oldImport = new RegExp(`(import \\{\\s*((\\w)*,\\s*)*)(${component},?\\s*)(((\\w)*,\\s*)*\\} from 'libraries\\/components')`, 'g');
 
   files.forEach(file =>{
-    console.log(`searching ${file}`);
+    searched++;
     const txt = readFileSync(file, 'utf-8');
 
     const location = txt.search(oldImport);
@@ -43,8 +45,8 @@ async function run(){
         // create a new import before the exisiting one
         step3 = step2.slice(0, location) + `import { ${component} } from '@iqies/iqies-ui-components';\n` + step2.slice(location)
       }
-      // writeFileSync(file, step3);
-      count++;
+      writeFileSync(file, step3);
+      replaced++;
       console.log(`repaced in ${file}`);
     }
     
@@ -52,7 +54,8 @@ async function run(){
 }
 
 run().then(()=>{
-  console.log('finished');
+  console.log(`searched in ${searched} files`);
+  console.log(`replaced in ${replaced} files`);
 })
 
 
