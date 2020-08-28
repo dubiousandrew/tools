@@ -18,10 +18,13 @@ async function run(){
 
   const files = await getFiles(process.argv[2]);
 
+  console.log(`found ${files.length} files`);
+
   const component = process.argv[3];
   const oldImport = new RegExp(`(import \\{\\s*((\\w)*,\\s*)*)(${component},?\\s*)(((\\w)*,\\s*)*\\} from 'libraries\\/components')`, 'g');
 
   files.forEach(file =>{
+    console.log(`searching ${file}`);
     const txt = readFileSync(file, 'utf-8');
 
     const location = txt.search(oldImport);
@@ -40,13 +43,16 @@ async function run(){
         // create a new import before the exisiting one
         step3 = step2.slice(0, location) + `import { ${component} } from '@iqies/iqies-ui-components';\n` + step2.slice(location)
       }
-      writeFileSync(file, step3);
+      // writeFileSync(file, step3);
       count++;
       console.log(`repaced in ${file}`);
     }
     
   })
 }
-run();
+
+run().then(()=>{
+  console.log('finished');
+})
 
 
