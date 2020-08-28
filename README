@@ -1,0 +1,10 @@
+tool to change imports from 
+'libraries/components'
+to 
+'@iqies/iqies-ui-components'
+
+yarn install
+compile:
+yarn dev
+replace imports with:
+node index.js ./path/to/src ComponentName
